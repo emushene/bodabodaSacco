@@ -1,8 +1,50 @@
-import "./login.scss"
+import { useContext, useState} from "react";
+import {useNavigate} from 'react-router-dom';
+import "./login.scss";
+import { signInWithEmailAndPassword } from "firebase/auth";
+import {auth} from "../../firebase.mjs";
+import {AuthContext} from "../../context/AuthContext";
 
+
+//handle Login by useState to take params from  Form
 const Login = () => {
+    const [error, setError] = useState(false);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const navigate = useNavigate();
+
+// Once Logged in, navigate to home page
+
+const {dispatch} = useContext(AuthContext)
+
+
+  const handleLogin = (e) => {
+    e.preventDefault();
+
+signInWithEmailAndPassword(auth, email, password)
+  .then((userCredential) => {
+    // Signed in 
+    const user = userCredential.user;
+    dispatch({type:"LOGIN", payload:user})
+    navigate("/home")
+    // ...
+  })
+  .catch((error) => {
+    setError(true);
+  });
+
+  }
   return (
-    <div>Login</div>
+    <div className="login ">
+      <form className="login-form" onSubmit={handleLogin}>
+        <input type="email" placeholder="email" onChange={e=>setEmail(e.target.value)}/>
+        <input type="password" placeholder="password" onChange={e=>setPassword(e.target.value)}/>
+        <button type="submit">Login</button>
+        {error && <span>Wrong Email/Password combination entered!</span>}
+        
+      </form>
+
+    </div>
   )
 }
 

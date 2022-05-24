@@ -3,8 +3,23 @@ import Sidebar from "../../components/sidebar/Sidebar";
 import Navbar from "../../components/navbar/Navbar";
 import Chart from "../../components/chart/Chart";
 import List from "../../components/table/Table";
+import { DataGrid } from "@mui/x-data-grid";
+import { userColumns, userRows } from "../../datatablesource";
+import { Link } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { db } from "../../firebase.mjs"
+import { collection, getDocs, deleteDoc, doc, onSnapshot } from "firebase/firestore";
+
+import ReactPDF from '@react-pdf/renderer';
+import Pdf from '../../components/Pdf/Pdf';
+
+
 
 const Single = () => {
+  const DownloadPdf = () => {
+    ReactPDF.render(<Pdf />, `${__dirname}/example.pdf`);
+  }
+
   return (
     <div className="single">
       <Sidebar />
@@ -12,7 +27,7 @@ const Single = () => {
         <Navbar />
         <div className="top">
           <div className="left">
-            <div className="editButton">Edit</div>
+            <div className="editButton" onClick={DownloadPdf}>Edit</div>
             <h1 className="title">Information</h1>
             <div className="item">
               <img

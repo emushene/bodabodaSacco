@@ -1,11 +1,97 @@
 import "./new.scss";
+//import { userInputs, userInputs} from "../../formSource";
 import Sidebar from "../../components/sidebar/Sidebar";
 import Navbar from "../../components/navbar/Navbar";
 import DriveFolderUploadOutlinedIcon from "@mui/icons-material/DriveFolderUploadOutlined";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom"
+import {doc, setDoc, collection, addDoc} from "firebase/firestore";
+import { db, storage, auth } from "../../firebase.mjs";
+import { ref, uploadBytesResumable, getDownloadURL} from "firebase/storage";
+
+
+
 
 const New = ({ inputs, title }) => {
-  const [file, setFile] = useState("");
+const [file, setFile] = useState("");
+const [data, setData] = useState({});
+const [uploadingwait, setUploadingwait] = useState(null);
+
+
+
+let governmentId= data.idno
+
+//upLoad QR
+
+//Upload Pictures
+
+useEffect(() => {
+const uploadFile = () => {
+
+  
+
+
+  const storageRef = ref(storage, governmentId);
+  const uploadTask = uploadBytesResumable(storageRef, file);
+  uploadTask.on('state_changed', 
+    (snapshot) => {
+    const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+      console.log('Upload is ' + progress + '% done');
+      setUploadingwait(progress)
+      switch (snapshot.state) {
+        case 'paused':
+          console.log('Upload is paused');
+          break;
+        case 'running':
+          console.log('Upload is running');
+          break;
+          default:
+          break;
+
+      }
+    }, 
+    (error) => {
+      
+    }, 
+    () => {
+      // Handle successful uploads on complete
+      // For instance, get the download URL: https://firebasestorage.googleapis.com/...
+      getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+        setData((previousData)=> ({...previousData, img:downloadURL}))
+      });
+      
+    }
+
+  );
+    
+}
+file && uploadFile()
+},[file])
+
+const handleInput = (e) => {
+  const id = e.target.id;
+  const value = e.target.value;
+
+  setData({...data, [id]:value})
+}
+
+const handleAdd = async (e) => {
+  e.preventDefault()
+  let governmentId = data.idno;
+  
+try {
+
+
+await setDoc(doc(db, "saccoMembers", governmentId), {
+...data
+});
+
+
+}
+catch (err){
+console.log(err)
+}
+}
 
   return (
     <div className="new">
@@ -27,10 +113,10 @@ const New = ({ inputs, title }) => {
             />
           </div>
           <div className="right">
-            <form>
+            <form onSubmit={handleAdd}>
               <div className="formInput">
                 <label htmlFor="file">
-                  Image: <DriveFolderUploadOutlinedIcon className="icon" />
+                  Upload Picture/Image: <DriveFolderUploadOutlinedIcon className="icon" />
                 </label>
                 <input
                   type="file"
@@ -43,10 +129,12 @@ const New = ({ inputs, title }) => {
               {inputs.map((input) => (
                 <div className="formInput" key={input.id}>
                   <label>{input.label}</label>
-                  <input type={input.type} placeholder={input.placeholder} />
+                  <input id={input.id}
+                  type={input.type} placeholder={input.placeholder} onChange={handleInput} />
                 </div>
               ))}
-              <button>Send</button>
+              <button disabled={uploadingwait !== null && uploadingwait < 100}
+               type="submit">Register Member</button>
             </form>
           </div>
         </div>

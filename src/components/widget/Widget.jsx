@@ -47,9 +47,9 @@ const Widget = ({ type }) => {
       break;
     case "earning":
       data = {
-        title: "EARNINGS",
+        title: "Registered Monthly",
         isMoney: true,
-        link: "View net earnings",
+        link: "View all Reg Members",
         icon: (
           <MonetizationOnOutlinedIcon
             className="icon"
@@ -83,7 +83,7 @@ const Widget = ({ type }) => {
       <div className="left">
         <span className="title">{data.title}</span>
         <span className="counter">
-          {data.isMoney && "$"} {amount}
+          {data.isMoney && "Ksh"} {amount}
         </span>
         <span className="link">{data.link}</span>
       </div>
