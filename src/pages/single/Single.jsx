@@ -3,22 +3,50 @@ import Sidebar from "../../components/sidebar/Sidebar";
 import Navbar from "../../components/navbar/Navbar";
 import Chart from "../../components/chart/Chart";
 import List from "../../components/table/Table";
-import { DataGrid } from "@mui/x-data-grid";
-import { userColumns, userRows } from "../../datatablesource";
-import { Link } from "react-router-dom";
+import QRCode from 'react-qr-code';
 import { useState, useEffect } from "react";
 import { db } from "../../firebase.mjs"
-import { collection, getDocs, deleteDoc, doc, onSnapshot } from "firebase/firestore";
-
-import ReactPDF from '@react-pdf/renderer';
-import Pdf from '../../components/Pdf/Pdf';
-
+import { collection, onSnapshot } from "firebase/firestore";
+//import { list } from "firebase/storage";
 
 
 const Single = () => {
-  const DownloadPdf = () => {
-    ReactPDF.render(<Pdf />, `${__dirname}/example.pdf`);
-  }
+
+  const [qrcodeData, setQrcodeData] = useState([]);
+  const [back, setBack] = useState('#FFFFFF');
+  const [fore, setFore] = useState('#000000');
+  const [size, setSize] = useState(256);
+  
+  useEffect (()=>{
+
+    const unsub = onSnapshot(collection(db, "saccoMembers"), (snapShot) => {
+      let list = [];
+    
+      snapShot.docs.forEach(doc=>{
+        list.push({id:doc.id, ...doc.data()});
+      });
+      setQrcodeData(list);
+    
+    },
+    (error) => {
+      console.log(error)
+    }
+    );
+    return () => {
+      unsub();
+    }
+      },[])
+
+  console.log(qrcodeData)
+
+
+
+
+
+
+
+
+  
 
   return (
     <div className="single">
@@ -27,8 +55,9 @@ const Single = () => {
         <Navbar />
         <div className="top">
           <div className="left">
-            <div className="editButton" onClick={DownloadPdf}>Edit</div>
-            <h1 className="title">Information</h1>
+            <div className="editButton" >Edit</div>
+            <div style={{marginLeft: '50PX', fontSize: "16px"}}><h1 className="title-TITLE">MATHARE SUB-COUNTY</h1></div>
+            <div style={{ marginLeft: "160px"}}><h2 className="sub-title"> HURUMA BODABODA </h2></div>
             <div className="item">
               <img
                 src="https://images.pexels.com/photos/733872/pexels-photo-733872.jpeg?auto=compress&cs=tinysrgb&dpr=3&h=750&w=1260"
@@ -43,17 +72,15 @@ const Single = () => {
                 </div>
                 <div className="detailItem">
                   <span className="itemKey">Phone:</span>
-                  <span className="itemValue">+1 2345 67 89</span>
+                  
                 </div>
                 <div className="detailItem">
-                  <span className="itemKey">Address:</span>
-                  <span className="itemValue">
-                    Elton St. 234 Garden Yd. NewYork
-                  </span>
+                  <span className="itemKey">***</span>
+                  
                 </div>
                 <div className="detailItem">
-                  <span className="itemKey">Country:</span>
-                  <span className="itemValue">USA</span>
+                  <span className="itemKey">*:</span>
+                  
                 </div>
               </div>
             </div>
@@ -64,11 +91,19 @@ const Single = () => {
         </div>
         <div className="bottom">
         <h1 className="title">Last Transactions</h1>
-          <List/>
+        <List/>
         </div>
       </div>
     </div>
+
+    
+
+
   );
+
+
+
+  
 };
 
 export default Single;

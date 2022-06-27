@@ -8,7 +8,7 @@ import {AuthContext} from "../../context/AuthContext";
 
 //handle Login by useState to take params from  Form
 const Login = () => {
-    const [error, setError] = useState(false);
+  const [error, setError] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();

@@ -15,6 +15,11 @@
         box-shadow: 2px 4px 10px 1px rgba(201, 201, 201, 0.47);
         padding: 20px;
         position: relative;
+        
+        background: linear-gradient(to bottom left, white 50%, red 50%);
+        
+        
+      
 
         .editButton {
           position: absolute;
@@ -26,6 +31,10 @@
           background-color: #7551f818;
           cursor: pointer;
           border-radius: 0px 0px 0px 5px;
+
+          .title.title {
+            margin-left: 20px;
+          }
         }
 
         .item {
@@ -64,7 +73,7 @@
       }
 
       .right {
-        flex: 2;
+        flex: 1;
       }
     }
 
