@@ -9,7 +9,7 @@ import "./style/dark.scss";
 import { useContext } from "react";
 import { DarkModeContext } from "./context/darkModeContext";
 import { AuthContext } from "./context/AuthContext";
-
+// commit to github
 
 function App() {
   const { darkMode } = useContext(DarkModeContext);
